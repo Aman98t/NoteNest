@@ -4,14 +4,29 @@ const auth = require('../middleware/auth');
 const Note = require('../models/Note');
 
 // GET all notes for user (GET /api/notes)
-router.get('/', auth, async (req, res) => {
-  try {
-    const notes = await Note.find({ userId: req.user.id }).sort({ createdAt: -1 });
-    res.json(notes);
-  } catch (err) {
-    res.status(500).send('Server Error');
-  }
-});
+// SEARCH notes by keyword (GET /api/notes/search?q=keyword)
+router.get('/search', auth, async (req, res) => {
+    try {
+      const query = req.query.q;
+      if (!query) {
+        return res.status(400).json({ msg: 'Search query is required' });
+      }
+  
+      const notes = await Note.find({
+        userId: req.user.id,
+        $or: [
+          { title: { $regex: query, $options: 'i' } },      // 'i' means case-insensitive
+          { content: { $regex: query, $options: 'i' } },
+          { tags: { $regex: query, $options: 'i' } }        // Search in tags as well
+        ]
+      }).sort({ createdAt: -1 });
+  
+      res.json(notes);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  });
 
 // CREATE a new note (POST /api/notes)
 router.post('/', auth, async (req, res) => {
