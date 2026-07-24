@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://notenest-backend-n4i4.onrender.com/api',
 });
 
 // Request Interceptor: Automatically attach token if available
