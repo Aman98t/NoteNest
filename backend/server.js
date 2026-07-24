@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 // Add these lines below the Database Connection in server.js
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
+app.use('/api/stats', require('./routes/stats')); // <--- Ye line add karein
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch(err => console.error('MongoDB Connection Failed:', err));
